@@ -1,9 +1,6 @@
 import streamlit as st
 import cv2
 import math
-from PIL import Image
-import io
-import requests
 import os
 from numpy import random
 from ultralytics import YOLO
@@ -69,10 +66,7 @@ def live_streaming_detection(model, conf_threshold, iou_threshold, camera_source
     placeholder = st.empty()
 
     # Initialize video capture object
-    if camera_source == 'Device Camera':
-        cap = cv2.VideoCapture(0)  # Access the device camera
-    else:
-        cap = cv2.VideoCapture(camera_source)  # Access an external camera via URL
+    cap = cv2.VideoCapture(camera_source)
 
     # Check if the video stream is opened successfully
     if not cap.isOpened():
