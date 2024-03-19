@@ -4,15 +4,15 @@ import math
 from PIL import Image
 import io
 import requests
+import os
 from numpy import random
 from ultralytics import YOLO
-import os
 
 # Set environment variable to suppress OpenCV warning
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 # Function to load the YOLO model
-@st.cache_resource
+@st.cache(allow_output_mutation=True)
 def load_model(model_path):
     model = YOLO(model_path)
     return model
