@@ -1,10 +1,16 @@
 import streamlit as st
 import cv2
 import math
+from PIL import Image
+import io
+import requests
+from numpy import random
 from ultralytics import YOLO
+import os
+
+# Import necessary libraries
 import requests
 from PIL import Image
-import os
 import io
 
 # Set environment variable to suppress OpenCV warning
@@ -83,11 +89,16 @@ def live_streaming_detection(model, conf_threshold, iou_threshold, video_url):
                   "teddy bear", "hair drier", "toothbrush","fire","smoke","gun","animal"
                   ]
 
-    while True:
-        success, img = cap.read()
+    # Placeholder to display the video stream
+    placeholder = st.empty()
 
-        # Check if frame reading is successful
-        if not success:
+    # Loop to continuously read frames from the camera and update the Streamlit app
+    while True:
+        # Read a frame from the camera
+        ret, img = cap.read()
+
+        # Check if the frame was read successfully
+        if not ret:
             st.error("Error: Failed to read frame from video stream.")
             break
 
@@ -123,8 +134,8 @@ def live_streaming_detection(model, conf_threshold, iou_threshold, video_url):
 
                 cv2.putText(img, classNames[cls], org, font, fontScale, color, thickness)
 
-        # Display the frame with bounding boxes
-        cv2.imshow('Webcam', img)
+        # Display the frame with bounding boxes in Streamlit
+        placeholder.image(img, channels="BGR", use_column_width=True)
 
         # Break the loop if 'q' key is pressed
         if cv2.waitKey(1) == ord('q'):
