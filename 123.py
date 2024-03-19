@@ -8,11 +8,6 @@ from numpy import random
 from ultralytics import YOLO
 import os
 
-# Import necessary libraries
-import requests
-from PIL import Image
-import io
-
 # Set environment variable to suppress OpenCV warning
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
@@ -164,33 +159,6 @@ def main():
     # Set confidence and IOU thresholds
     conf_threshold = st.slider("Confidence Threshold", 0.0, 1.0, 0.20, 0.05)
     iou_threshold = st.slider("IOU Threshold", 0.0, 1.0, 0.5, 0.05)
-
-    # Image selection
-    st.subheader("Image Detection")
-    image_source = st.radio("Select image source:", ("Enter URL", "Upload from Computer"))
-    if image_source == "Upload from Computer":
-        uploaded_file = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
-        if uploaded_file is not None:
-            image = Image.open(uploaded_file)
-            with st.spinner("Detecting"):
-                prediction, text = predict_image(model, image, conf_threshold, iou_threshold)
-                st.image(prediction, caption="Prediction", use_column_width=True)
-                st.success(text)
-    else:
-        url = st.text_input("Enter the image URL:")
-        if url:
-            try:
-                response = requests.get(url, stream=True)
-                if response.status_code == 200:
-                    image = Image.open(response.raw)
-                    with st.spinner("Detecting"):
-                        prediction, text = predict_image(model, image, conf_threshold, iou_threshold)
-                        st.image(prediction, caption="Prediction", use_column_width=True)
-                        st.success(text)
-                else:
-                    st.error("Error loading image from URL.")
-            except requests.exceptions.RequestException as e:
-                st.error(f"Error loading image from URL: {e}")
 
     # Live streaming camera option
     st.subheader("Live Streaming Camera")
