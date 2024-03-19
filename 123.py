@@ -1,6 +1,9 @@
 import streamlit as st
 import cv2
 import math
+from PIL import Image
+import io
+import requests
 import os
 from numpy import random
 from ultralytics import YOLO
@@ -142,19 +145,7 @@ def live_streaming_detection(model, conf_threshold, iou_threshold, camera_source
     cap.release()
     cv2.destroyAllWindows()
 
-def check_camera_indices():
-    for i in range(10):  # Try indices from 0 to 9 (you can adjust the range as needed)
-        cap = cv2.VideoCapture(i)
-        if cap.isOpened():
-            print(f"Camera index {i} is available.")
-            cap.release()
-        else:
-            print(f"Camera index {i} is not available.")
-
 def main():
-    # Check available camera indices
-    check_camera_indices()
-
     # Set Streamlit page configuration
     st.set_page_config(
         page_title="Wildfire Detection",
