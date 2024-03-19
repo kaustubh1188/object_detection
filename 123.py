@@ -12,7 +12,7 @@ from ultralytics import YOLO
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 # Function to load the YOLO model
-@st.cache(allow_output_mutation=True)
+@st.cache_resource
 def load_model(model_path):
     model = YOLO(model_path)
     return model
