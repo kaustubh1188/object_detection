@@ -62,16 +62,35 @@ def predict_image(model, image, conf_threshold, iou_threshold):
     return res_image, prediction_text
 
 # Function for live streaming detection
+import time
+
 def live_streaming_detection(model, conf_threshold, iou_threshold, video_url):
-    # start streaming from the camera
-    cap = cv2.VideoCapture(video_url)
+    # Placeholder to display the video stream
+    placeholder = st.empty()
 
-    # Set timeout for the connection attempt to 2 minutes
-    cap.set(cv2.CAP_PROP_FPS, 120)
+    # Retry connection for up to 5 attempts
+    max_attempts = 5
+    attempt = 1
 
-    # Check if the video stream is opened successfully
-    if not cap.isOpened():
-        st.error("Error: Unable to open video stream.")
+    while attempt <= max_attempts:
+        try:
+            # start streaming from the camera
+            cap = cv2.VideoCapture(video_url)
+
+            # Check if the video stream is opened successfully
+            if not cap.isOpened():
+                st.error("Error: Unable to open video stream.")
+                return
+
+            # Connection successful, exit retry loop
+            break
+        except Exception as e:
+            st.error(f"Connection attempt {attempt} failed: {str(e)}")
+            attempt += 1
+            time.sleep(5)  # Wait for 5 seconds before retrying
+
+    else:
+        st.error(f"Failed to establish connection after {max_attempts} attempts.")
         return
 
     # Object classes
@@ -86,9 +105,6 @@ def live_streaming_detection(model, conf_threshold, iou_threshold, video_url):
                   "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors",
                   "teddy bear", "hair drier", "toothbrush","fire","smoke","gun","animal"
                   ]
-
-    # Placeholder to display the video stream
-    placeholder = st.empty()
 
     # Loop to continuously read frames from the camera and update the Streamlit app
     while True:
