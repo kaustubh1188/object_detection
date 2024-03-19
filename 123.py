@@ -66,6 +66,9 @@ def live_streaming_detection(model, conf_threshold, iou_threshold, video_url):
     # start streaming from the camera
     cap = cv2.VideoCapture(video_url)
 
+    # Set timeout for the connection attempt to 2 minutes
+    cap.set(cv2.CAP_PROP_FPS, 120)
+
     # Check if the video stream is opened successfully
     if not cap.isOpened():
         st.error("Error: Unable to open video stream.")
