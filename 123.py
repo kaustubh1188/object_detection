@@ -64,33 +64,19 @@ def predict_image(model, image, conf_threshold, iou_threshold):
 # Function for live streaming detection
 import time
 
-def live_streaming_detection(model, conf_threshold, iou_threshold, video_url):
+def live_streaming_detection(model, conf_threshold, iou_threshold, camera_source):
     # Placeholder to display the video stream
     placeholder = st.empty()
 
-    # Retry connection for up to 5 attempts
-    max_attempts = 5
-    attempt = 1
-
-    while attempt <= max_attempts:
-        try:
-            # start streaming from the camera
-            cap = cv2.VideoCapture(video_url)
-
-            # Check if the video stream is opened successfully
-            if not cap.isOpened():
-                st.error("Error: Unable to open video stream.")
-                return
-
-            # Connection successful, exit retry loop
-            break
-        except Exception as e:
-            st.error(f"Connection attempt {attempt} failed: {str(e)}")
-            attempt += 1
-            time.sleep(5)  # Wait for 5 seconds before retrying
-
+    # Initialize video capture object
+    if camera_source == 'Device Camera':
+        cap = cv2.VideoCapture(0)  # Access the device camera
     else:
-        st.error(f"Failed to establish connection after {max_attempts} attempts.")
+        cap = cv2.VideoCapture(camera_source)  # Access an external camera via URL
+
+    # Check if the video stream is opened successfully
+    if not cap.isOpened():
+        st.error("Error: Unable to open video stream.")
         return
 
     # Object classes
@@ -181,7 +167,15 @@ def main():
 
     # Live streaming camera option
     st.subheader("Live Streaming Camera")
-    video_url = st.text_input("Enter the IP or URL of the camera:")
+
+    # User choice for camera source
+    camera_source = st.radio("Select Camera Source:", ("Device Camera", "External Camera via URL"))
+
+    if camera_source == "External Camera via URL":
+        video_url = st.text_input("Enter the IP or URL of the camera:")
+    else:
+        video_url = 0  # Use default device camera
+
     if st.button("Start Live Stream"):
         live_streaming_detection(model, conf_threshold, iou_threshold, video_url)
 
